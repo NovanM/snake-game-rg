@@ -182,12 +182,19 @@ function moveUp(snake) {
 function checkCollision(snakes) {
     let isCollide = false;
     //this
-    for (let i = 0; i < snakes.length; i++) {
-        for (let j = 0; j < snakes.length; j++) {
-            for (let k = 1; k < snakes[j].body.length; k++) {
-                if (snakes[i].head.x == snakes[j].body[k].x && snakes[i].head.y == snakes[j].body[k].y) {
-                    isCollide = true;
-                }
+    // for (let i = 0; i < snakes.length; i++) {
+    //     for (let j = 0; j < snakes.length; j++) {
+    //         for (let k = 1; k < snakes[j].body.length; k++) {
+    //             if (snakes[i].head.x == snakes[j].body[k].x && snakes[i].head.y == snakes[j].body[k].y) {
+    //                 isCollide = true;
+    //             }
+    //         }
+    //     }
+    // }
+    for (let j = 0; j < snakes.length; j++) {
+        for (let k = 1; k < snakes[j].body.length; k++) {
+            if (snakes[j].head.x == snakes[j].body[k].x && snakes[j].head.y == snakes[j].body[k].y) {
+                isCollide = true;
             }
         }
     }
