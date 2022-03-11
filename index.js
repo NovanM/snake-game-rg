@@ -39,7 +39,6 @@ function initSnake(color) {
         ...initHeadAndBody(),
         direction: initDirection(),
         score: 0,
-        nyawa: 3, 
         level: 1 
     }
 }
