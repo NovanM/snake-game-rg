@@ -50,6 +50,9 @@ let apples = [{
     color: "green",
     position: initPosition(),
 }]
+let nyawa = {
+    position: initPosition()
+}
 
 function drawCell(ctx, x, y, color) {
     ctx.fillStyle = color;
@@ -95,6 +98,18 @@ function draw() {
             ctx.drawImage(img, apple.position.x * CELL_SIZE, apple.position.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         }
 
+        // menambahkan nyawa ketika score bilangan prima
+        let prima = 0;
+        for(let k = 1; k <= snake1.score; k++){
+            if(snake1.score%k==0){
+                prima++;
+            }
+        }
+        if(prima == 2){
+            var img = document.getElementById("nyawa");
+            ctx.drawImage(img, nyawa.position.x * CELL_SIZE, nyawa.position.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);    
+        }
+
         drawScore(snake1);
 
     }, REDRAW_INTERVAL);
@@ -126,13 +141,20 @@ function eat(snake, apples) {
         }
     }
 }
-
+function dapatNyawa(snake, nyawa) {
+    if (snake.head.x == nyawa.position.x && snake.head.y == nyawa.position.y) {
+        nyawa.position = initPosition();
+        snake.score++;
+        snake.body.push({x: snake.head.x, y: snake.head.y});
+    }
+}
 
 function moveLeft(snake) {
     snake.head.x--;
     
     teleport(snake);
     eat(snake, apples);
+    dapatNyawa(snake, nyawa);
 }
 
 function moveRight(snake) {
@@ -140,18 +162,21 @@ function moveRight(snake) {
 
     teleport(snake);
     eat(snake, apples);
+    dapatNyawa(snake, nyawa);
 }
 
 function moveDown(snake) {
     snake.head.y++;
     teleport(snake);
     eat(snake, apples);
+    dapatNyawa(snake, nyawa);
 }
 
 function moveUp(snake) {
     snake.head.y--;
     teleport(snake);
     eat(snake, apples);
+    dapatNyawa(snake, nyawa);
 }
 
 function checkCollision(snakes) {
