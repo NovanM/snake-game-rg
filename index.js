@@ -1,7 +1,7 @@
 const CELL_SIZE = 20;
 
 const CANVAS_SIZE = 600;
-const REDRAW_INTERVAL = 100;
+const REDRAW_INTERVAL = 10;
 const WIDTH = CANVAS_SIZE / CELL_SIZE;
 const HEIGHT = CANVAS_SIZE / CELL_SIZE;
 const DIRECTION = {
@@ -11,7 +11,7 @@ const DIRECTION = {
     DOWN: 3,
 }
 
-const MOVE_INTERVAL = 120;
+let MOVE_INTERVAL = 150;
 
 function initPosition() {
     return {
@@ -39,6 +39,7 @@ function initSnake(color) {
         ...initHeadAndBody(),
         direction: initDirection(),
         score: 0,
+        level: 1 
     }
 }
 let snake1 = initSnake("purple");
@@ -53,13 +54,43 @@ let apples = [{
 let nyawa = {
     position: initPosition()
 }
-
+let snakeNyawa = 3; 
 function drawCell(ctx, x, y, color) {
     ctx.fillStyle = color;
     ctx.drawImage(color,x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
    
 }
 
+// level board
+function drawLevel(snake) {
+    let levelCanvas;
+    levelCanvas = document.getElementById("levelBoard");
+    let levelCtx = levelCanvas.getContext("2d");
+
+    levelCtx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    levelCtx.font = "30px Arial";
+    levelCtx.fillText("Level " + snake.level, 10, levelCanvas.scrollHeight / 2);
+}
+
+// nyawa board
+function drawNyawa(snake) {
+    let NyawaCanvas;
+    NyawaCanvas = document.getElementById("nyawaBoard");
+    let NyawaCtx = NyawaCanvas.getContext("2d");
+    let nyawaX = 10;
+    let nyawaY = 5;
+    let cell = 15;
+    NyawaCtx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    for(let i = 1; i <= snakeNyawa; i++){
+        var img = document.getElementById("nyawa");
+        if(i%11==0){
+            nyawaY+=25;
+            nyawaX = 10
+        }
+        NyawaCtx.drawImage(img, nyawaX, nyawaY, cell, cell);
+        nyawaX+=20;
+    }
+}
 
 function drawScore(snake) {
     let scoreCanvas;
@@ -110,7 +141,9 @@ function draw() {
             ctx.drawImage(img, nyawa.position.x * CELL_SIZE, nyawa.position.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);    
         }
 
+        drawLevel(snake1);
         drawScore(snake1);
+        drawNyawa(snake1);
 
     }, REDRAW_INTERVAL);
 }
@@ -138,6 +171,10 @@ function eat(snake, apples) {
             apple.position = initPosition();
             snake.score++;
             snake.body.push({x: snake.head.x, y: snake.head.y});
+            if(snake.score%5==0){
+                snake.level++;
+                MOVE_INTERVAL-=35;
+            }
         }
     }
 }
@@ -145,6 +182,7 @@ function dapatNyawa(snake, nyawa) {
     if (snake.head.x == nyawa.position.x && snake.head.y == nyawa.position.y) {
         nyawa.position = initPosition();
         snake.score++;
+        snakeNyawa++;
         snake.body.push({x: snake.head.x, y: snake.head.y});
     }
 }
@@ -182,12 +220,19 @@ function moveUp(snake) {
 function checkCollision(snakes) {
     let isCollide = false;
     //this
-    for (let i = 0; i < snakes.length; i++) {
-        for (let j = 0; j < snakes.length; j++) {
-            for (let k = 1; k < snakes[j].body.length; k++) {
-                if (snakes[i].head.x == snakes[j].body[k].x && snakes[i].head.y == snakes[j].body[k].y) {
-                    isCollide = true;
-                }
+    // for (let i = 0; i < snakes.length; i++) {
+    //     for (let j = 0; j < snakes.length; j++) {
+    //         for (let k = 1; k < snakes[j].body.length; k++) {
+    //             if (snakes[i].head.x == snakes[j].body[k].x && snakes[i].head.y == snakes[j].body[k].y) {
+    //                 isCollide = true;
+    //             }
+    //         }
+    //     }
+    // }
+    for (let j = 0; j < snakes.length; j++) {
+        for (let k = 1; k < snakes[j].body.length; k++) {
+            if (snakes[j].head.x == snakes[j].body[k].x && snakes[j].head.y == snakes[j].body[k].y) {
+                isCollide = true;
             }
         }
     }
@@ -198,7 +243,9 @@ function checkCollision(snakes) {
 
         alert("Game over");
         snake1 = initSnake("purple");
-        
+        snakeNyawa--;
+        snake1.level = 1
+        MOVE_INTERVAL = 150
     }
     return isCollide;
 }
