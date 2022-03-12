@@ -76,6 +76,7 @@ function drawScore(snake) {
 }
 
 function draw() {
+    
     setInterval(function() {
         let snakeCanvas = document.getElementById("snakeBoard");
         let ctx = snakeCanvas.getContext("2d");
@@ -99,19 +100,22 @@ function draw() {
         }
 
         // menambahkan nyawa ketika score bilangan prima
-        let prima = 0;
-        for(let k = 1; k <= snake1.score; k++){
-            if(snake1.score%k==0){
-                prima++;
+        setTimeout(() => {
+            
+            let prima = 0;
+            for(let k = 1; k <= snake1.score; k++){
+                if(snake1.score%k==0){
+                    prima++;
+                }
             }
-        }
-        if(prima == 2){
-            var img = document.getElementById("nyawa");
-            ctx.drawImage(img, nyawa.position.x * CELL_SIZE, nyawa.position.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);    
-        }
+            if(prima == 2){
+                var img = document.getElementById("nyawa");
+                ctx.drawImage(img, nyawa.position.x * CELL_SIZE, nyawa.position.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);    
+            }
+        }, 2000);
 
         drawScore(snake1);
-
+        console.log(REDRAW_INTERVAL);
     }, REDRAW_INTERVAL);
 }
 
