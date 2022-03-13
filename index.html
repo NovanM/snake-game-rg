@@ -8,11 +8,14 @@
         </style>
     <body onload="draw();">
         <h1>Snake</h1>
+        <div style="padding-left: 10px;">Nyawa</div>
         <img id="apple" style="display: none;" width="20" height="20" src="assets/image/apple.png" alt="Apple">
         <img id="nyawa" style="display: none;" width="20" height="20" src="assets/image/nyawa.png" alt="Nyawa">
         <img id="headSnake" style="display: none;" src="assets/image/snake-head.png" alt="snakeHead">
         <img id="bodySnake" style="display: none;" width="5" height="5" src="assets/image/snake-body.png" alt="snakeBody">
-        <canvas id="snakeBoard" width="600" height="600" style="border:1px solid #000000;"></canvas>
+        <canvas id="nyawaBoard" width="250" height="50" style="position: absolute;"></canvas>
+        <canvas id="levelBoard" width="350" height="50" style="position: absolute; margin-left: 250;"></canvas>
+        <canvas id="snakeBoard" width="600" height="600" style="border:1px solid #000000; margin-top: 50px;"></canvas>
         <canvas id="score1Board" width="100" height="100" style="border:1px solid #000000;"></canvas>
     </body>
 </html>
