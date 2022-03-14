@@ -39,9 +39,52 @@ function initSnake(color) {
         ...initHeadAndBody(),
         direction: initDirection(),
         score: 0,
-        level: 1 
+        level: 1 ,
+        health: 3,
     }
 }
+function getStarted() {
+  snake1.score = 0;
+  level = 1;
+  wallX = [];
+  wallY = [];
+}
+var wallX = [];
+var wallY = [];
+var levelWall2 = [
+  {
+    x1: 8,
+    x2: 22,
+    y: 10,
+  },
+  {
+    x1: 8,
+    x2: 22,
+    y: 5,
+  },
+];
+var levelWall3 = [
+  {
+    x1: 8,
+    x2: 22,
+    y: 15,
+  },
+];
+var levelWall4 = [
+  {
+    x1: 8,
+    x2: 22,
+    y: 20,
+  },
+];
+var levelWall5 = [
+  {
+    x1: 8,
+    x2: 22,
+    y: 25,
+  },
+];
+
 let snake1 = initSnake("purple");
 let apples = [{
     color: "red",
@@ -54,11 +97,15 @@ let apples = [{
 let nyawa = {
     position: initPosition()
 }
-let snakeNyawa = 3; 
+let snakeNyawa = snake1.health; 
 function drawCell(ctx, x, y, color) {
     ctx.fillStyle = color;
     ctx.drawImage(color,x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
    
+}
+function drawWall(ctx, x, y, color){
+    ctx.fillStyle = color;
+  ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 }
 
 // level board
@@ -92,6 +139,113 @@ function drawNyawa(snake) {
     }
 }
 
+// wall funtion
+function initWall2() {
+    for (let i = 0; i < levelWall2.length; i++) {
+      for (let j = levelWall2[i].x1; j <= levelWall2[i].x2; j++) {
+        wallX.push(j);
+        wallY.push(levelWall2[i].y);
+      }
+    }
+  }
+  
+  function initWall3() {
+    for (let i = 0; i < levelWall3.length; i++) {
+      for (let j = levelWall3[i].x1; j <= levelWall3[i].x2; j++) {
+        wallX.push(j);
+        wallY.push(levelWall3[i].y);
+      }
+    }
+  }
+  
+  function initWall4() {
+    for (let i = 0; i < levelWall4.length; i++) {
+      for (let j = levelWall4[i].x1; j <= levelWall4[i].x2; j++) {
+        wallX.push(j);
+        wallY.push(levelWall4[i].y);
+      }
+    }
+  }
+  
+  function initWall5() {
+    for (let i = 0; i < levelWall5.length; i++) {
+      for (let j = levelWall5[i].x1; j <= levelWall5[i].x2; j++) {
+        wallX.push(j);
+        wallY.push(levelWall5[i].y);
+      }
+    }
+  }
+  function createWall() {
+    let wallCanvas = document.getElementById("snakeBoard");
+    let ctx = wallCanvas.getContext("2d");
+    for (let i = 0; i < wallX.length; i++) {
+      drawWall(ctx, wallX[i], wallY[i], "#808080");
+    }
+  }
+
+  function hitTheWall(snake) {
+    for (let i = 0; i < wallX.length; i++) {
+      if (
+      snake.head.x === wallX[i] &&
+        (snake.direction == 2 || snake.direction == 3)
+      ) {
+        if (
+        snake.head.y - 1 === wallY[i] ||
+        snake.head.y + 1 === wallY[i]
+        ) {
+          overAudio.play();
+          if (snake.health === 0) {
+            gameOverAudio.play();
+            alert("Game Over");
+            getStarted();
+          } else {
+            snake.health--;
+          }
+          stop(snake);
+        }
+      }
+  
+      if (
+      snake.head.y === wallY[i] &&
+        (snake.direction == 0 || snake.direction == 1)
+      ) {
+        if (
+        snake.head.x - 1 === wallX[i] ||
+        snake.head.x + 1 === wallX[i]
+        ) {
+          overAudio.play();
+          if (snake.health === 0) {
+            gameOverAudio.play();
+            alert("Game Over");
+            getStarted();
+          } else {
+            snake.health--;
+          }
+          stop(snake);
+        }
+      }
+    }
+  }
+
+  // funtion level
+  function nextLevel(snake) {
+    level++;
+    if (level == 2) {
+      initWall2();
+    } else if (level == 3) {
+      initWall3();
+    } else if (level == 4) {
+      initWall4();
+    } else if (level == 5) {
+      initWall5();
+    }
+    snake.position = initPosition();
+    snake.health += 3;
+    stop(snake1);
+    upLevel = 1;
+  }
+  
+
 function drawScore(snake) {
     let scoreCanvas;
     if (snake.color == snake1.color) {
@@ -105,7 +259,11 @@ function drawScore(snake) {
     scoreCtx.fillStyle = snake.color
     scoreCtx.fillText(snake.score, 10, scoreCanvas.scrollHeight / 2);
 }
-
+var level = 1;
+var upLevel = 0;
+var overAudio = new Audio("assets/audio/over.wav");
+var levelAudio = new Audio("assets/audio/level.wav");
+var gameOverAudio = new Audio("assets/audio/game-over.mp3");
 function draw() {
     
     setInterval(function() {
@@ -144,7 +302,7 @@ function draw() {
                 ctx.drawImage(img, nyawa.position.x * CELL_SIZE, nyawa.position.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);    
             }
         }, 2000);
-
+        createWall();
         drawLevel(snake1);
         drawScore(snake1);
 
@@ -152,6 +310,12 @@ function draw() {
 
         drawNyawa(snake1);
 
+        if (upLevel == 1) {
+            upLevel = 0;
+            if (level <= 5) {
+              alert("level up to : " + level);
+            }
+          }
     }, REDRAW_INTERVAL);
 }
 
@@ -182,8 +346,17 @@ function eat(snake, apples) {
                 snake.level++;
                 MOVE_INTERVAL-=35;
             }
+            if (snake.score % 5 == 0 && snake.score != 0) {
+              snake.move -= 20;
+              levelAudio.play();
+              nextLevel(snake);
+            }
+            
+
         }
     }
+    
+    
 }
 function dapatNyawa(snake, nyawa) {
     if (snake.head.x == nyawa.position.x && snake.head.y == nyawa.position.y) {
@@ -196,25 +369,27 @@ function dapatNyawa(snake, nyawa) {
 
 function moveLeft(snake) {
     snake.head.x--;
-    
     teleport(snake);
     eat(snake, apples);
     dapatNyawa(snake, nyawa);
+    hitTheWall(snake);
 }
 
 function moveRight(snake) {
     snake.head.x++;
-
     teleport(snake);
     eat(snake, apples);
     dapatNyawa(snake, nyawa);
+    hitTheWall(snake);
 }
 
 function moveDown(snake) {
+
     snake.head.y++;
     teleport(snake);
     eat(snake, apples);
     dapatNyawa(snake, nyawa);
+    hitTheWall(snake);
 }
 
 function moveUp(snake) {
@@ -222,6 +397,7 @@ function moveUp(snake) {
     teleport(snake);
     eat(snake, apples);
     dapatNyawa(snake, nyawa);
+    hitTheWall(snake);
 }
 
 function checkCollision(snakes) {
